@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">My Book</string>
+    <string name="app_name">MY BOOK SEARCH</string>
+    <string name="search_info">검색어를 입력하세요</string>
+    <string name="search">검색</string>
 </resources>
