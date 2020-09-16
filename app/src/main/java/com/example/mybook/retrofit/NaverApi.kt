@@ -15,7 +15,8 @@ interface NaverApi {
     @GET("v1/search/book.json")
     fun searchBook(
         @Query("query") query: String? = null,
-        @Query("display") display: Int? = null
+        @Query("display") display: Int? = null,
+        @Query("start") start: Int? = null
     ): Call<Book>
 
     companion object {
