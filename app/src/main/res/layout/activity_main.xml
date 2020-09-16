@@ -28,6 +28,7 @@
         android:layout_marginTop="32dp"
         android:background="@drawable/edit_search_shape"
         android:hint="@string/search_info"
+        android:imeOptions="actionSearch"
         android:importantForAutofill="no"
         android:inputType="text"
         android:padding="10dp"

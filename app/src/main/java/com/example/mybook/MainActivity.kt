@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -38,6 +39,7 @@ class MainActivity : AppCompatActivity() {
 
         initScrollListener()
         initSearchClickListener()
+        initEnterListener()
     }
 
     private fun clickSearch(){
@@ -85,8 +87,6 @@ class MainActivity : AppCompatActivity() {
                     if (lastVisibleItem != -1 && lastVisibleItem >= layoutManager.itemCount - 1) {
                         start += display
                         searchBook()
-
-                        Log.i("로딩", "$start $display")
                     }
                 }
             }
@@ -96,6 +96,18 @@ class MainActivity : AppCompatActivity() {
     private fun initSearchClickListener(){
         btn_search.setOnClickListener {
             clickSearch()
+        }
+    }
+
+    private fun initEnterListener(){
+        et_query.setOnEditorActionListener { _, actionId, _ ->
+            when (actionId) {
+                EditorInfo.IME_ACTION_SEARCH -> {
+                    clickSearch()
+                    true
+                }
+                else -> false
+            }
         }
     }
 

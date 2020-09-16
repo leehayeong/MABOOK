@@ -11,7 +11,6 @@ import com.bumptech.glide.Glide
 import com.example.mybook.R
 import com.example.mybook.model.Item
 import kotlinx.android.synthetic.main.item_book.view.*
-import okhttp3.internal.notify
 
 class BookAdapter(private val itemList: MutableList<Item>) :
     RecyclerView.Adapter<BookAdapter.BookViewHolder>() {
