@@ -11,6 +11,7 @@ import com.bumptech.glide.Glide
 import com.example.mybook.R
 import com.example.mybook.model.Item
 import kotlinx.android.synthetic.main.item_book.view.*
+import okhttp3.internal.notify
 
 class BookAdapter(private val itemList: MutableList<Item>) :
     RecyclerView.Adapter<BookAdapter.BookViewHolder>() {
@@ -27,6 +28,11 @@ class BookAdapter(private val itemList: MutableList<Item>) :
 
     override fun getItemCount(): Int {
         return itemList.size
+    }
+
+    fun clearItem(){
+        this.itemList.clear()
+        notifyDataSetChanged()
     }
 
     fun addItem(itemList: List<Item>) {

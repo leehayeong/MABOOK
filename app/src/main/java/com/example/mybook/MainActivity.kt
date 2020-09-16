@@ -1,9 +1,10 @@
 package com.example.mybook
 
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.LinearLayout
+import android.view.inputmethod.InputMethodManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,7 +20,7 @@ import retrofit2.Response
 class MainActivity : AppCompatActivity() {
 
     private val api = NaverApi.createRetrofit()
-    private val query = "책"
+    private var query = ""
     private val display = 10
     private var start = 1
     private var total = 0
@@ -32,11 +33,20 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        searchBook()
         rv_book_list.adapter = bookAdapter
         rv_book_list.addItemDecoration(DividerItemDecoration(applicationContext, VERTICAL))
 
         initScrollListener()
+        initSearchClickListener()
+    }
+
+    private fun clickSearch(){
+        query = et_query.text.toString()
+        et_query.text.clear()
+        bookAdapter.clearItem()
+        start = 1
+        hideKeyboard()
+        searchBook()
     }
 
     private fun searchBook() {
@@ -47,7 +57,7 @@ class MainActivity : AppCompatActivity() {
                 total = response.body()?.total ?: 0
 
                 bookAdapter.addItem(itemList)
-                setText(total)
+                setTotal()
 
                 Log.i("호출 성공", "${response.body()}")
             }
@@ -58,8 +68,8 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    private fun setText(total: Int) {
-        tv_total.text = "$query 검색 결과 총 $total 건"
+    private fun setTotal() {
+        tv_total.text = getString(R.string.search_total, query, total)
     }
 
     private fun initScrollListener() {
@@ -81,5 +91,16 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         })
+    }
+
+    private fun initSearchClickListener(){
+        btn_search.setOnClickListener {
+            clickSearch()
+        }
+    }
+
+    private fun hideKeyboard(){
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(et_query.windowToken, 0)
     }
 }
