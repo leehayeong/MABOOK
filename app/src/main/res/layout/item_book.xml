@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/iv_book_image"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/book_image"
+        app:layout_constraintBottom_toBottomOf="@id/tv_book_discount"
+        app:layout_constraintEnd_toStartOf="@id/tv_book_title"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tv_book_title" />
+
+    <TextView
+        android:id="@+id/tv_book_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginRight="24dp"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/tv_book_author"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_weight="3"
+        app:layout_constraintStart_toEndOf="@id/iv_book_image"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"
+        tools:text="도서명" />
+
+    <TextView
+        android:id="@+id/tv_book_author"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/tv_book_publisher"
+        app:layout_constraintEnd_toEndOf="@id/tv_book_title"
+        app:layout_constraintStart_toStartOf="@id/tv_book_title"
+        app:layout_constraintTop_toBottomOf="@id/tv_book_title"
+        tools:text="저자" />
+
+    <TextView
+        android:id="@+id/tv_book_publisher"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="@id/tv_book_title"
+        app:layout_constraintStart_toStartOf="@id/tv_book_title"
+        app:layout_constraintTop_toBottomOf="@id/tv_book_author"
+        tools:text="출판사" />
+
+    <TextView
+        android:id="@+id/tv_book_price"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textColor="@color/gray"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toTopOf="@id/tv_book_discount"
+        app:layout_constraintEnd_toEndOf="@id/tv_book_title"
+        app:layout_constraintStart_toStartOf="@id/tv_book_title"
+        app:layout_constraintTop_toBottomOf="@id/tv_book_publisher"
+        app:layout_constraintVertical_chainStyle="packed"
+        tools:text="정가" />
+
+    <TextView
+        android:id="@+id/tv_book_discount"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:textColor="@color/colorPrimary"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/tv_book_title"
+        app:layout_constraintStart_toStartOf="@id/tv_book_title"
+        app:layout_constraintTop_toBottomOf="@id/tv_book_price"
+        tools:text="할인가" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
