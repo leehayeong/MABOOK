@@ -25,6 +25,7 @@ class MainActivity : AppCompatActivity() {
     private val display = 10
     private var start = 1
     private var total = 0
+    private var isNewQuery = true
 
     private val bookAdapter: BookAdapter by lazy {
         BookAdapter(mutableListOf())
@@ -42,11 +43,12 @@ class MainActivity : AppCompatActivity() {
         initEnterListener()
     }
 
-    private fun clickSearch(){
+    private fun clickSearch() {
         query = et_query.text.toString()
         et_query.text.clear()
         bookAdapter.clearItem()
         start = 1
+        isNewQuery = true
         hideKeyboard()
         searchBook()
     }
@@ -59,7 +61,11 @@ class MainActivity : AppCompatActivity() {
                 total = response.body()?.total ?: 0
 
                 bookAdapter.addItem(itemList)
-                setTotal()
+
+                if (isNewQuery) {
+                    setTotal()
+                    isNewQuery = false
+                }
 
                 Log.i("호출 성공", "${response.body()}")
             }
@@ -74,6 +80,9 @@ class MainActivity : AppCompatActivity() {
         tv_total.text = getString(R.string.search_total, query, total)
     }
 
+    //TODO: 새로운 검색어가 아니고, 기존 검색어인데 마지막 페이지여서 total 이 0으로 갱신되는 경우, 갱신되지 않도록 막아야 함
+
+
     private fun initScrollListener() {
         rv_book_list.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -83,7 +92,8 @@ class MainActivity : AppCompatActivity() {
 
                 // 페이징
                 if (start <= 1000) {
-                    val lastVisibleItem = (layoutManager as LinearLayoutManager).findLastCompletelyVisibleItemPosition()
+                    val lastVisibleItem =
+                        (layoutManager as LinearLayoutManager).findLastCompletelyVisibleItemPosition()
                     if (lastVisibleItem != -1 && lastVisibleItem >= layoutManager.itemCount - 1) {
                         start += display
                         searchBook()
@@ -93,13 +103,13 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    private fun initSearchClickListener(){
+    private fun initSearchClickListener() {
         btn_search.setOnClickListener {
             clickSearch()
         }
     }
 
-    private fun initEnterListener(){
+    private fun initEnterListener() {
         et_query.setOnEditorActionListener { _, actionId, _ ->
             when (actionId) {
                 EditorInfo.IME_ACTION_SEARCH -> {
@@ -111,7 +121,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun hideKeyboard(){
+    private fun hideKeyboard() {
         val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(et_query.windowToken, 0)
     }
