@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.example.mybook.extensions.htmlToString
+import com.example.mybook.extensions.replaceFragment
 import com.example.mybook.model.Item
 import kotlinx.android.synthetic.main.fragment_book_detail.*
 
@@ -18,6 +19,7 @@ class BookDetailFragment : Fragment(R.layout.fragment_book_detail) {
         val item = arguments?.getParcelable<Item>("item") ?: return
         setActionBar(item.title)
         bindBookData(item)
+        initLinkClickListener(item.link)
     }
 
     private fun setActionBar(title: String) {
@@ -62,6 +64,16 @@ class BookDetailFragment : Fragment(R.layout.fragment_book_detail) {
     private fun calDiscountRate(discount: String, price: String): String {
         return "${(100 - (Integer.parseInt(discount).toDouble() / Integer.parseInt(price)
             .toDouble() * 100).toInt())}%"
+    }
+
+    private fun initLinkClickListener(link: String) {
+        btn_link.setOnClickListener {
+            val nextFragment = BookLinkFragment()
+            val bundle = Bundle()
+            bundle.putString("link", link)
+            nextFragment.arguments = bundle
+            fragmentManager?.replaceFragment(R.id.fl_fragment_view, nextFragment, true)
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

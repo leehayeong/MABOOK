@@ -15,4 +15,5 @@
     <string name="description">책소개</string>
     <string name="finish_info">뒤로 버튼을 한 번 더 누르면 종료됩니다.</string>
     <string name="not_found_description">등록된 책 소개가 없습니다.</string>
+    <string name="link">보러가기&#160;&#160;〉</string>
 </resources>
