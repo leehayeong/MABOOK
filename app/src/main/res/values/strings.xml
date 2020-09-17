@@ -4,4 +4,13 @@
     <string name="search">검색</string>
     <string name="book_image">도서 이미지</string>
     <string name="search_total">%s 검색 결과 %d 건</string>
+    <string name="dialog_info">안내</string>
+    <string name="dialog_ok">확인</string>
+    <string name="title">제목</string>
+    <string name="author">저자</string>
+    <string name="publisher">출판</string>
+    <string name="pubdate">출간</string>
+    <string name="price">가격</string>
+    <string name="price_won">%s원</string>
+    <string name="description">책소개</string>
 </resources>
