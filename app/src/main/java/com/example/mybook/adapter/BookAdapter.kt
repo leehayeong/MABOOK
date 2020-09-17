@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.mybook.R
+import com.example.mybook.extensions.htmlToString
 import com.example.mybook.model.Item
 import kotlinx.android.synthetic.main.item_book.view.*
 
@@ -52,20 +53,11 @@ class BookAdapter(private val itemList: MutableList<Item>) :
     class BookViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
         fun bind(item: Item) {
             Glide.with(view).load(item.image).into(view.iv_book_image)
-            view.tv_book_title.text = htmlToString(item.title)
-            view.tv_book_author.text = htmlToString(item.author)
-            view.tv_book_publisher.text = htmlToString(item.publisher)
+            view.tv_book_title.text = item.title.htmlToString()
+            view.tv_book_author.text = item.author.htmlToString()
+            view.tv_book_publisher.text = item.publisher.htmlToString()
             view.tv_book_price.text = item.price
             view.tv_book_discount.text = item.discount
-        }
-
-        private fun htmlToString(string: String): Spanned {
-            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                Html.fromHtml(string, Html.FROM_HTML_MODE_LEGACY)
-            } else {
-                @Suppress("DEPRECATION")
-                Html.fromHtml(string)
-            }
         }
     }
 }

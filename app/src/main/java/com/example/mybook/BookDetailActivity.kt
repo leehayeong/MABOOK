@@ -2,6 +2,7 @@ package com.example.mybook
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.example.mybook.extensions.htmlToString
 import com.example.mybook.model.Item
 import kotlinx.android.synthetic.main.activity_book_detail.*
 
@@ -11,7 +12,7 @@ class BookDetailActivity : AppCompatActivity() {
         setContentView(R.layout.activity_book_detail)
 
         val item = intent.extras?.getParcelable<Item>("item") ?: return
-        tv_title.text = item.title
+        tv_title.text = item.title.htmlToString()
     }
 
     override fun onPause() {
