@@ -41,6 +41,7 @@ class MainActivity : AppCompatActivity() {
         initScrollListener()
         initSearchClickListener()
         initEnterListener()
+        initFabListener()
     }
 
     private fun clickSearch() {
@@ -118,6 +119,12 @@ class MainActivity : AppCompatActivity() {
                 }
                 else -> false
             }
+        }
+    }
+
+    private fun initFabListener(){
+        fab_up.setOnClickListener {
+            rv_book_list.smoothScrollToPosition(0)
         }
     }
 
