@@ -57,7 +57,7 @@ class BookDetailFragment : Fragment(R.layout.fragment_book_detail) {
         tv_price.text = getString(R.string.price_won, dec.format(price.toInt()))
         tv_price.paintFlags = tv_price.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
         tv_discount.text = getString(R.string.price_won, dec.format(discount.toInt()))
-        tv_discount_rate.text = calDiscountRate(price, discount)
+        tv_discount_rate.text = calDiscountRate(discount, price)
     }
 
     private fun convertToDataType(pubDate: String): String {
@@ -69,7 +69,8 @@ class BookDetailFragment : Fragment(R.layout.fragment_book_detail) {
     }
 
     private fun calDiscountRate(discount: String, price: String): String {
-        return "${(100 - discount.toDouble() / price.toDouble() * 100).toInt()}%"
+        return if (price == "0") "100%"
+        else "${(100 - (discount.toDouble() / price.toDouble() * 100)).toInt()}%"
     }
 
     private fun initLinkClickListener(link: String) {
