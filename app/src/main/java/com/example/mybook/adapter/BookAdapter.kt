@@ -15,11 +15,17 @@ import kotlinx.android.synthetic.main.item_book.view.*
 class BookAdapter(private val itemList: MutableList<Item>) :
     RecyclerView.Adapter<BookAdapter.BookViewHolder>() {
 
+    var onItemClick: ((View, Int) -> Unit)? = null
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BookViewHolder {
         return BookViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_book, parent, false))
     }
 
     override fun onBindViewHolder(holder: BookViewHolder, position: Int) {
+        holder.itemView.setOnClickListener {
+            onItemClick?.invoke(it, position)
+        }
+
         holder.apply {
             bind(itemList[position])
         }
@@ -29,7 +35,7 @@ class BookAdapter(private val itemList: MutableList<Item>) :
         return itemList.size
     }
 
-    fun clearItem(){
+    fun clearItem() {
         this.itemList.clear()
         notifyDataSetChanged()
     }
@@ -37,6 +43,10 @@ class BookAdapter(private val itemList: MutableList<Item>) :
     fun addItem(itemList: List<Item>) {
         this.itemList.addAll(itemList)
         notifyDataSetChanged()
+    }
+
+    fun getItem(position: Int): Item {
+        return itemList[position]
     }
 
     class BookViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {

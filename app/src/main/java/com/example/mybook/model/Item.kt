@@ -1,5 +1,9 @@
 package com.example.mybook.model
 
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
+
+@Parcelize
 data class Item (
     val title: String,
     val image: String,
@@ -9,4 +13,4 @@ data class Item (
     val publisher: String,
     val description: String,
     val pubdate: String
-)
+) : Parcelable

@@ -1,6 +1,7 @@
 package com.example.mybook
 
 import android.content.Context
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -28,7 +29,15 @@ class MainActivity : AppCompatActivity() {
     private var isNewQuery = true
 
     private val bookAdapter: BookAdapter by lazy {
-        BookAdapter(mutableListOf())
+        BookAdapter(mutableListOf()).apply{
+            onItemClick = {_, position ->
+                val nextIntent = Intent(this@MainActivity, BookDetailActivity::class.java)
+                val item = bookAdapter.getItem(position)
+                nextIntent.putExtra("item", item)
+                nextIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
+                startActivity(nextIntent)
+            }
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -80,9 +89,6 @@ class MainActivity : AppCompatActivity() {
     private fun setTotal() {
         tv_total.text = getString(R.string.search_total, query, total)
     }
-
-    //TODO: 새로운 검색어가 아니고, 기존 검색어인데 마지막 페이지여서 total 이 0으로 갱신되는 경우, 갱신되지 않도록 막아야 함
-
 
     private fun initScrollListener() {
         rv_book_list.addOnScrollListener(object : RecyclerView.OnScrollListener() {
