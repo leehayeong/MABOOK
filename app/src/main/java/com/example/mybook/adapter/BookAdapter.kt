@@ -1,8 +1,6 @@
 package com.example.mybook.adapter
 
-import android.os.Build
-import android.text.Html
-import android.text.Spanned
+import android.graphics.Paint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -56,7 +54,13 @@ class BookAdapter(private val itemList: MutableList<Item>) :
             view.tv_book_title.text = item.title.htmlToString()
             view.tv_book_author.text = item.author.htmlToString()
             view.tv_book_publisher.text = item.publisher.htmlToString()
+            if(item.discount.isBlank()){
+                view.tv_book_discount.text = item.price
+                view.tv_book_price.text = ""
+                return
+            }
             view.tv_book_price.text = item.price
+            view.tv_book_price.paintFlags = view.tv_book_price.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
             view.tv_book_discount.text = item.discount
         }
     }

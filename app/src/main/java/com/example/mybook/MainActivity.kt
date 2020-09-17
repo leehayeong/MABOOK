@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -27,6 +28,7 @@ class MainActivity : AppCompatActivity() {
     private var start = 1
     private var total = 0
     private var isNewQuery = true
+    private var backKeyPressedTime: Long = 0
 
     private val bookAdapter: BookAdapter by lazy {
         BookAdapter(mutableListOf()).apply{
@@ -137,5 +139,14 @@ class MainActivity : AppCompatActivity() {
     private fun hideKeyboard() {
         val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(et_query.windowToken, 0)
+    }
+
+    override fun onBackPressed() {
+        if(System.currentTimeMillis() - backKeyPressedTime >= 2000) {
+            backKeyPressedTime = System.currentTimeMillis()
+            Toast.makeText(this, R.string.finish_info, Toast.LENGTH_SHORT).show()
+            return
+        }
+        finish()
     }
 }

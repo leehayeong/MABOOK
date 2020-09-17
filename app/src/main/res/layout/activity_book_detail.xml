@@ -172,9 +172,23 @@
                 android:textColor="@color/gray"
                 android:textSize="13sp"
                 app:layout_constraintBottom_toBottomOf="@id/tv_discount"
+                app:layout_constraintEnd_toStartOf="@+id/tv_discount_rate"
                 app:layout_constraintStart_toEndOf="@id/tv_discount"
                 app:layout_constraintTop_toTopOf="@id/tv_discount"
                 tools:text="정가" />
+
+            <TextView
+                android:id="@+id/tv_discount_rate"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
+                android:textColor="@color/colorAccent"
+                android:textSize="13sp"
+                app:layout_constraintBottom_toBottomOf="@id/tv_discount"
+                app:layout_constraintStart_toEndOf="@id/tv_price"
+                app:layout_constraintTop_toTopOf="@id/tv_discount"
+                tools:text="할인율" />
 
             <View
                 android:id="@+id/view_divider"
