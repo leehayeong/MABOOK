@@ -11,6 +11,7 @@ import com.example.mybook.extensions.htmlToString
 import com.example.mybook.extensions.replaceFragment
 import com.example.mybook.model.Item
 import kotlinx.android.synthetic.main.fragment_book_detail.*
+import java.text.DecimalFormat
 
 class BookDetailFragment : Fragment(R.layout.fragment_book_detail) {
 
@@ -23,6 +24,7 @@ class BookDetailFragment : Fragment(R.layout.fragment_book_detail) {
     }
 
     private fun setActionBar(title: String) {
+        setHasOptionsMenu(true)
         val activity = (activity as AppCompatActivity).apply {
             setSupportActionBar(my_toolbar)
         }
@@ -42,15 +44,20 @@ class BookDetailFragment : Fragment(R.layout.fragment_book_detail) {
             true -> getString(R.string.not_found_description)
             else -> item.description.htmlToString().toString()
         }
-        if (item.discount.isBlank()) {
-            tv_discount.text = item.price
+        setPrice(item.price, item.discount)
+    }
+
+    private fun setPrice(price: String, discount: String){
+        val dec = DecimalFormat("#,###")
+        if (discount.isBlank()) {
+            tv_discount.text = getString(R.string.price_won, dec.format(price.toInt()))
             tv_price.text = ""
             return
         }
-        tv_price.text = item.price
+        tv_price.text = getString(R.string.price_won, dec.format(price.toInt()))
         tv_price.paintFlags = tv_price.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
-        tv_discount.text = item.discount
-        tv_discount_rate.text = calDiscountRate(item.price, item.discount)
+        tv_discount.text = getString(R.string.price_won, dec.format(discount.toInt()))
+        tv_discount_rate.text = calDiscountRate(price, discount)
     }
 
     private fun convertToDataType(pubDate: String): String {
@@ -62,8 +69,7 @@ class BookDetailFragment : Fragment(R.layout.fragment_book_detail) {
     }
 
     private fun calDiscountRate(discount: String, price: String): String {
-        return "${(100 - (Integer.parseInt(discount).toDouble() / Integer.parseInt(price)
-            .toDouble() * 100).toInt())}%"
+        return "${(100 - discount.toDouble() / price.toDouble() * 100).toInt()}%"
     }
 
     private fun initLinkClickListener(link: String) {

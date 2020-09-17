@@ -10,6 +10,7 @@ import com.example.mybook.R
 import com.example.mybook.extensions.htmlToString
 import com.example.mybook.model.Item
 import kotlinx.android.synthetic.main.item_book.view.*
+import java.text.DecimalFormat
 
 class BookAdapter(private val itemList: MutableList<Item>) :
     RecyclerView.Adapter<BookAdapter.BookViewHolder>() {
@@ -54,14 +55,19 @@ class BookAdapter(private val itemList: MutableList<Item>) :
             view.tv_book_title.text = item.title.htmlToString()
             view.tv_book_author.text = item.author.htmlToString()
             view.tv_book_publisher.text = item.publisher.htmlToString()
-            if(item.discount.isBlank()){
-                view.tv_book_discount.text = item.price
+            setPrice(item.price, item.discount)
+        }
+
+        private fun setPrice(price: String, discount: String){
+            val dec = DecimalFormat("#,###")
+            if(discount.isBlank()){
+                view.tv_book_discount.text = view.resources.getString(R.string.price_won, dec.format(price.toInt()))
                 view.tv_book_price.text = ""
                 return
             }
-            view.tv_book_price.text = item.price
+            view.tv_book_price.text = view.resources.getString(R.string.price_won, dec.format(price.toInt()))
             view.tv_book_price.paintFlags = view.tv_book_price.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
-            view.tv_book_discount.text = item.discount
+            view.tv_book_discount.text = view.resources.getString(R.string.price_won, dec.format(discount.toInt()))
         }
     }
 }
