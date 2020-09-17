@@ -3,31 +3,29 @@ package com.example.mybook
 import android.graphics.Paint
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.example.mybook.extensions.htmlToString
 import com.example.mybook.model.Item
-import kotlinx.android.synthetic.main.activity_book_detail.*
+import kotlinx.android.synthetic.main.fragment_book_detail.*
 
-class BookDetailActivity : AppCompatActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_book_detail)
+class BookDetailFragment : Fragment(R.layout.fragment_book_detail) {
 
-        val item = intent.extras?.getParcelable<Item>("item") ?: return
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val item = arguments?.getParcelable<Item>("item") ?: return
         setActionBar(item.title)
         bindBookData(item)
     }
 
-    override fun onPause() {
-        super.onPause()
-        overridePendingTransition(0, 0)
-    }
-
     private fun setActionBar(title: String) {
-        setSupportActionBar(my_toolbar)
-        with(supportActionBar) {
-            setTitle(title.htmlToString())
+        val activity = (activity as AppCompatActivity).apply {
+            setSupportActionBar(my_toolbar)
+        }
+        with(activity.supportActionBar) {
+            this?.title = title.htmlToString()
             this?.setDisplayHomeAsUpEnabled(true)
         }
     }
@@ -42,7 +40,7 @@ class BookDetailActivity : AppCompatActivity() {
             true -> getString(R.string.not_found_description)
             else -> item.description.htmlToString().toString()
         }
-        if(item.discount.isBlank()){
+        if (item.discount.isBlank()) {
             tv_discount.text = item.price
             tv_price.text = ""
             return
@@ -69,7 +67,7 @@ class BookDetailActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
-                onBackPressed()
+                activity?.onBackPressed()
                 return true
             }
         }
