@@ -43,8 +43,10 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         rv_book_list.adapter = bookAdapter
         rv_book_list.addItemDecoration(DividerItemDecoration(activity, VERTICAL))
+        setTotal()
 
         initScrollListener()
         initSearchClickListener()
@@ -67,11 +69,10 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         resultSearchBook.enqueue(object : Callback<Book> {
             override fun onResponse(call: Call<Book>, response: Response<Book>) {
                 val itemList = response.body()?.items ?: emptyList()
-                total = response.body()?.total ?: 0
-
                 bookAdapter.addItem(itemList)
 
                 if (isNewQuery) {
+                    total = response.body()?.total ?: 0
                     setTotal()
                     isNewQuery = false
                 }
