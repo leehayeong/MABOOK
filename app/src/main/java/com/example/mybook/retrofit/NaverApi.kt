@@ -1,6 +1,6 @@
 package com.example.mybook.retrofit
 
-import com.example.mybook.model.Book
+import com.example.mybook.model.BookListResponse
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -14,10 +14,10 @@ interface NaverApi {
 
     @GET("v1/search/book.json")
     fun searchBook(
-        @Query("query") query: String? = null,
+        @Query("query") query: String,
         @Query("display") display: Int? = null,
         @Query("start") start: Int? = null
-    ): Call<Book>
+    ): Call<BookListResponse>
 
     companion object {
         // 1. 변수 선언

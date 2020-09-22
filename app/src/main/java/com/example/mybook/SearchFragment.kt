@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.VERTICAL
 import com.example.mybook.adapter.BookAdapter
 import com.example.mybook.extensions.replaceFragment
-import com.example.mybook.model.Book
+import com.example.mybook.model.BookListResponse
 import com.example.mybook.retrofit.NaverApi
 import kotlinx.android.synthetic.main.fragment_search.*
 import retrofit2.Call
@@ -27,7 +28,6 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
     private val display = 10
     private var start = 1
     private var total = 0
-    private var isNewQuery = true
 
     private val bookAdapter: BookAdapter by lazy {
         BookAdapter(mutableListOf()).apply {
@@ -46,7 +46,7 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
 
         rv_book_list.adapter = bookAdapter
         rv_book_list.addItemDecoration(DividerItemDecoration(activity, VERTICAL))
-        setTotal()
+        setSearchOutputField(query, total)
 
         initScrollListener()
         initSearchClickListener()
@@ -55,38 +55,40 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
     }
 
     private fun clickSearch() {
-        query = et_query.text.toString()
-        et_query.text.clear()
         bookAdapter.clearItem()
+        if (et_query.text.isBlank()) {
+            clearSearchField()
+            return
+        }
+        query = et_query.text.toString()
         start = 1
-        isNewQuery = true
         hideKeyboard()
         searchBook()
     }
 
     private fun searchBook() {
         val resultSearchBook = api.searchBook(query, display, start)
-        resultSearchBook.enqueue(object : Callback<Book> {
-            override fun onResponse(call: Call<Book>, response: Response<Book>) {
+        resultSearchBook.enqueue(object : Callback<BookListResponse> {
+            override fun onResponse(call: Call<BookListResponse>, response: Response<BookListResponse>) {
                 val itemList = response.body()?.items ?: emptyList()
                 bookAdapter.addItem(itemList)
-
-                if (isNewQuery) {
-                    total = response.body()?.total ?: 0
-                    setTotal()
-                    isNewQuery = false
-                }
-
+                total = response.body()?.total ?: 0
+                setSearchOutputField(query, total)
                 Log.i("호출 성공", "${response.body()}")
             }
 
-            override fun onFailure(call: Call<Book>, t: Throwable) {
+            override fun onFailure(call: Call<BookListResponse>, t: Throwable) {
                 Log.e("호출 실패", "$t")
             }
         })
     }
 
-    private fun setTotal() {
+    private fun clearSearchField() {
+        Toast.makeText(activity, getString(R.string.search_info), Toast.LENGTH_SHORT).show()
+        setSearchOutputField("", 0)
+    }
+
+    private fun setSearchOutputField(query: String, total: Int) {
         tv_total.text = getString(R.string.search_total, query, total)
     }
 
@@ -97,7 +99,6 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
 
                 val layoutManager = recyclerView.layoutManager
 
-                // 페이징
                 if (start <= 1000) {
                     val lastVisibleItem =
                         (layoutManager as LinearLayoutManager).findLastCompletelyVisibleItemPosition()
