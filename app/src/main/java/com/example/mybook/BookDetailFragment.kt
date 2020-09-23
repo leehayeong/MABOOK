@@ -7,7 +7,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
-import com.example.mybook.extensions.htmlToString
+import com.example.mybook.extensions.htmlToSpanned
 import com.example.mybook.extensions.replaceFragment
 import com.example.mybook.model.Item
 import kotlinx.android.synthetic.main.fragment_book_detail.*
@@ -15,9 +15,13 @@ import java.text.DecimalFormat
 
 class BookDetailFragment : Fragment(R.layout.fragment_book_detail) {
 
+    companion object {
+        const val ITEM_KEY = "item"
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val item = arguments?.getParcelable<Item>("item") ?: return
+        val item = arguments?.getParcelable<Item>(ITEM_KEY) ?: return
         setActionBar(item.title)
         bindBookData(item)
         initLinkClickListener(item.link)
@@ -29,20 +33,20 @@ class BookDetailFragment : Fragment(R.layout.fragment_book_detail) {
             setSupportActionBar(my_toolbar)
         }
         with(activity.supportActionBar) {
-            this?.title = title.htmlToString()
+            this?.title = title.htmlToSpanned()
             this?.setDisplayHomeAsUpEnabled(true)
         }
     }
 
     private fun bindBookData(item: Item) {
         Glide.with(this).load(item.image).into(iv_image)
-        tv_title.text = item.title.htmlToString().toString()
-        tv_author.text = item.author.htmlToString().toString()
-        tv_publisher.text = item.publisher.htmlToString().toString()
+        tv_title.text = item.title.htmlToSpanned().toString()
+        tv_author.text = item.author.htmlToSpanned().toString()
+        tv_publisher.text = item.publisher.htmlToSpanned().toString()
         tv_pub_date.text = convertToDataType(item.pubdate)
         tv_description.text = when (item.description.isBlank()) {
             true -> getString(R.string.not_found_description)
-            else -> item.description.htmlToString().toString()
+            else -> item.description.htmlToSpanned().toString()
         }
         setPrice(item.price, item.discount)
     }
@@ -77,7 +81,7 @@ class BookDetailFragment : Fragment(R.layout.fragment_book_detail) {
         btn_link.setOnClickListener {
             val nextFragment = BookLinkFragment()
             val bundle = Bundle()
-            bundle.putString("link", link)
+            bundle.putString(BookLinkFragment.LINK_KEY, link)
             nextFragment.arguments = bundle
             fragmentManager?.replaceFragment(R.id.fl_fragment_view, nextFragment, true)
         }

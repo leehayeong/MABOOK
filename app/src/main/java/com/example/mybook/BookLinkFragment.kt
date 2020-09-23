@@ -11,9 +11,13 @@ import kotlinx.android.synthetic.main.fragment_book_link.*
 
 class BookLinkFragment : Fragment(R.layout.fragment_book_link) {
 
+    companion object {
+        const val LINK_KEY = "link"
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val link = arguments?.getString("link") ?: return
+        val link = arguments?.getString(LINK_KEY) ?: return
         loadWebView(link)
         setBackKeyListener()
     }

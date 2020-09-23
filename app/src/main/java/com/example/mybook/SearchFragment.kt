@@ -25,20 +25,23 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
 
     private val api = NaverApi.createRetrofit()
     private var query = ""
-    private val display = 10
     private var start = 1
     private var total = 0
-
     private val bookAdapter: BookAdapter by lazy {
         BookAdapter(mutableListOf()).apply {
             onItemClick = { _, position ->
                 val nextFragment = BookDetailFragment()
                 val bundle = Bundle()
-                bundle.putParcelable("item", bookAdapter.getItem(position))
+                bundle.putParcelable(BookDetailFragment.ITEM_KEY, bookAdapter.getItem(position))
                 nextFragment.arguments = bundle
                 fragmentManager?.replaceFragment(R.id.fl_fragment_view, nextFragment, true)
             }
         }
+    }
+
+    companion object {
+        private const val RESULT_DISPLAY_SIZE = 10
+        private const val MAX_START_PAGE = 1000
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -67,7 +70,7 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
     }
 
     private fun searchBook() {
-        val resultSearchBook = api.searchBook(query, display, start)
+        val resultSearchBook = api.searchBook(query, RESULT_DISPLAY_SIZE, start)
         resultSearchBook.enqueue(object : Callback<BookListResponse> {
             override fun onResponse(call: Call<BookListResponse>, response: Response<BookListResponse>) {
                 val itemList = response.body()?.items ?: emptyList()
@@ -99,11 +102,11 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
 
                 val layoutManager = recyclerView.layoutManager
 
-                if (start <= 1000) {
+                if (start <= MAX_START_PAGE) {
                     val lastVisibleItem =
                         (layoutManager as LinearLayoutManager).findLastCompletelyVisibleItemPosition()
                     if (lastVisibleItem != -1 && lastVisibleItem >= layoutManager.itemCount - 1) {
-                        start += display
+                        start += RESULT_DISPLAY_SIZE
                         searchBook()
                     }
                 }

@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.mybook.R
-import com.example.mybook.extensions.htmlToString
+import com.example.mybook.extensions.htmlToSpanned
 import com.example.mybook.model.Item
 import kotlinx.android.synthetic.main.item_book.view.*
 import java.text.DecimalFormat
@@ -52,9 +52,9 @@ class BookAdapter(private val itemList: MutableList<Item>) :
     class BookViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
         fun bind(item: Item) {
             Glide.with(view).load(item.image).into(view.iv_book_image)
-            view.tv_book_title.text = item.title.htmlToString()
-            view.tv_book_author.text = item.author.htmlToString()
-            view.tv_book_publisher.text = item.publisher.htmlToString()
+            view.tv_book_title.text = item.title.htmlToSpanned()
+            view.tv_book_author.text = item.author.htmlToSpanned()
+            view.tv_book_publisher.text = item.publisher.htmlToSpanned()
             setPrice(item.price, item.discount)
         }
 
