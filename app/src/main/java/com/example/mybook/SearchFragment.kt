@@ -14,12 +14,12 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.VERTICAL
 import com.example.mybook.adapter.BookAdapter
 import com.example.mybook.extensions.replaceFragment
-import com.example.mybook.model.BookListResponse
 import com.example.mybook.retrofit.NaverApi
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.kotlin.addTo
+import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_search.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class SearchFragment : Fragment(R.layout.fragment_search) {
 
@@ -27,6 +27,7 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
     private var query = ""
     private var start = 1
     private var total = 0
+    private val compositeDisposable = CompositeDisposable()
     private val bookAdapter: BookAdapter by lazy {
         BookAdapter(mutableListOf()).apply {
             onItemClick = { _, position ->
@@ -70,20 +71,18 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
     }
 
     private fun searchBook() {
-        val resultSearchBook = api.searchBook(query, RESULT_DISPLAY_SIZE, start)
-        resultSearchBook.enqueue(object : Callback<BookListResponse> {
-            override fun onResponse(call: Call<BookListResponse>, response: Response<BookListResponse>) {
-                val itemList = response.body()?.items ?: emptyList()
-                bookAdapter.addItem(itemList)
-                total = response.body()?.total ?: 0
+        val resultSearchBook = api.searchBookRx(query, RESULT_DISPLAY_SIZE, start)
+        resultSearchBook
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ response ->
+                total = response.total
+                bookAdapter.addItem(response.items)
                 setSearchOutputField(query, total)
-                Log.i("호출 성공", "${response.body()}")
-            }
-
-            override fun onFailure(call: Call<BookListResponse>, t: Throwable) {
-                Log.e("호출 실패", "$t")
-            }
-        })
+                Log.i("호출성공", "$response")
+            }, {
+                Log.e("호출실패", "$it")
+            }).addTo(compositeDisposable)
     }
 
     private fun clearSearchField() {
@@ -141,5 +140,10 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
     private fun hideKeyboard() {
         val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(et_query.windowToken, 0)
+    }
+
+    override fun onDestroy() {
+        compositeDisposable.dispose()
+        super.onDestroy()
     }
 }
