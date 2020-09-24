@@ -59,6 +59,11 @@ class BookAdapter(private val itemList: MutableList<Item>) :
         }
 
         private fun setPrice(price: String, discount: String){
+            if (price.isBlank()) {
+                view.tv_book_discount.text = "-"
+                return
+            }
+
             val dec = DecimalFormat("#,###")
             if(discount.isBlank()){
                 view.tv_book_discount.text = view.resources.getString(R.string.price_won, dec.format(price.toInt()))

@@ -52,10 +52,14 @@ class BookDetailFragment : Fragment(R.layout.fragment_book_detail) {
     }
 
     private fun setPrice(price: String, discount: String){
+        if (price.isBlank()) {
+            tv_discount.text = "-"
+            return
+        }
+
         val dec = DecimalFormat("#,###")
         if (discount.isBlank()) {
             tv_discount.text = getString(R.string.price_won, dec.format(price.toInt()))
-            tv_price.text = ""
             return
         }
         tv_price.text = getString(R.string.price_won, dec.format(price.toInt()))
