@@ -16,6 +16,7 @@ import com.example.mybook.R
 import com.example.mybook.adapter.BookAdapter
 import com.example.mybook.extensions.replaceFragment
 import com.example.mybook.retrofit.NaverApi
+import com.example.mybook.rx.AutoClearedDisposable
 import com.example.mybook.ui.bookdetail.BookDetailFragment
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -29,7 +30,9 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
     private var query = ""
     private var start = 1
     private var total = 0
-    private val compositeDisposable = CompositeDisposable()
+
+    private val disposable = AutoClearedDisposable(this)
+
     private val bookAdapter: BookAdapter by lazy {
         BookAdapter(mutableListOf()).apply {
             onItemClick = { _, position ->
@@ -45,7 +48,7 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        with(rv_book_list){
+        with(rv_book_list) {
             adapter = bookAdapter
             addItemDecoration(DividerItemDecoration(activity, VERTICAL))
         }
@@ -71,19 +74,19 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
     }
 
     private fun searchBook() {
-        val resultSearchBook = api.searchBookRx(query,
-            RESULT_DISPLAY_SIZE, start)
-        resultSearchBook
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({ response ->
-                total = response.total
-                bookAdapter.addItem(response.items)
-                setSearchOutputField(query, total)
-                Log.i("호출성공", "$response")
-            }, {
-                Log.e("호출실패", "$it")
-            }).addTo(compositeDisposable)
+        disposable.add(
+            api.searchBookRx(query, RESULT_DISPLAY_SIZE, start)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ response ->
+                    total = response.total
+                    bookAdapter.addItem(response.items)
+                    setSearchOutputField(query, total)
+                    Log.i("호출성공", "$response")
+                }, {
+                    Log.e("호출실패", "$it")
+                })
+        )
     }
 
     private fun clearSearchField() {
@@ -141,11 +144,6 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
     private fun hideKeyboard() {
         val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(et_query.windowToken, 0)
-    }
-
-    override fun onDestroy() {
-        compositeDisposable.dispose()
-        super.onDestroy()
     }
 
     companion object {
