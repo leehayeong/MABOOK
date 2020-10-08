@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">MY BOOK SEARCH - TEST</string>
-    <string name="search_info">검색어를 입력하세요</string>
+    <string name="search_info_msg">검색어를 입력하세요</string>
     <string name="search">검색</string>
     <string name="book_image">도서 이미지</string>
     <string name="search_total">%s 검색 결과 %d 건</string>

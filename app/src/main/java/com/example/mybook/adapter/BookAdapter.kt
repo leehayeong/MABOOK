@@ -12,7 +12,7 @@ import com.example.mybook.model.Item
 import kotlinx.android.synthetic.main.item_book.view.*
 import java.text.DecimalFormat
 
-class BookAdapter(private val itemList: MutableList<Item>) :
+class BookAdapter(private var itemList: List<Item>) :
     RecyclerView.Adapter<BookAdapter.BookViewHolder>() {
 
     var onItemClick: ((View, Int) -> Unit)? = null
@@ -35,13 +35,8 @@ class BookAdapter(private val itemList: MutableList<Item>) :
         return itemList.size
     }
 
-    fun clearItem() {
-        this.itemList.clear()
-        notifyDataSetChanged()
-    }
-
-    fun addItem(itemList: List<Item>) {
-        this.itemList.addAll(itemList)
+    fun setItems(itemList: List<Item>) {
+        this.itemList = itemList
         notifyDataSetChanged()
     }
 

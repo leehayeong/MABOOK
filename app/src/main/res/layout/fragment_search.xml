@@ -20,14 +20,14 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/et_query"
+        android:id="@+id/et_search"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginLeft="24dp"
         android:layout_marginTop="32dp"
         android:background="@drawable/edit_search_shape"
-        android:hint="@string/search_info"
+        android:hint="@string/search_info_msg"
         android:imeOptions="actionSearch"
         android:importantForAutofill="no"
         android:inputType="text"
@@ -49,11 +49,11 @@
         android:contentDescription="@string/search"
         android:padding="10dp"
         android:scaleType="fitCenter"
-        app:layout_constraintBottom_toBottomOf="@id/et_query"
+        app:layout_constraintBottom_toBottomOf="@id/et_search"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_weight="1"
-        app:layout_constraintStart_toEndOf="@+id/et_query"
-        app:layout_constraintTop_toTopOf="@id/et_query"
+        app:layout_constraintStart_toEndOf="@+id/et_search"
+        app:layout_constraintTop_toTopOf="@id/et_search"
         app:srcCompat="@drawable/btn_search" />
 
     <TextView
@@ -64,8 +64,8 @@
         android:gravity="center"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="@id/btn_search"
-        app:layout_constraintStart_toStartOf="@id/et_query"
-        app:layout_constraintTop_toBottomOf="@id/et_query"
+        app:layout_constraintStart_toStartOf="@id/et_search"
+        app:layout_constraintTop_toBottomOf="@id/et_search"
         tools:text="검색 결과" />
 
     <androidx.recyclerview.widget.RecyclerView

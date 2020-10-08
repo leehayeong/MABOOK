@@ -2,12 +2,12 @@ package com.example.mybook.ui.search
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -18,20 +18,19 @@ import com.example.mybook.extensions.replaceFragment
 import com.example.mybook.retrofit.NaverApi
 import com.example.mybook.rx.AutoClearedDisposable
 import com.example.mybook.ui.bookdetail.BookDetailFragment
+import com.example.mybook.ui.search.SearchViewModel.Companion.MAX_START_PAGE
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.disposables.CompositeDisposable
-import io.reactivex.rxjava3.kotlin.addTo
-import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_search.*
 
 class SearchFragment : Fragment(R.layout.fragment_search) {
 
-    private val api = NaverApi.createRetrofit()
-    private var query = ""
-    private var start = 1
-    private var total = 0
-
     private val disposable = AutoClearedDisposable(this)
+
+    private val viewModelFactory by lazy {
+        SearchViewModelFactory(NaverApi.createRetrofit())
+    }
+
+    private lateinit var viewModel: SearchViewModel
 
     private val bookAdapter: BookAdapter by lazy {
         BookAdapter(mutableListOf()).apply {
@@ -48,73 +47,51 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        with(rv_book_list) {
-            adapter = bookAdapter
-            addItemDecoration(DividerItemDecoration(activity, VERTICAL))
-        }
-
-        setSearchOutputField(query, total)
-
         initScrollListener()
         initSearchClickListener()
         initEnterListener()
         initFabListener()
-    }
 
-    private fun clickSearch() {
-        bookAdapter.clearItem()
-        if (et_query.text.isBlank()) {
-            clearSearchField()
-            return
+        with(rv_book_list) {
+            addItemDecoration(DividerItemDecoration(activity, VERTICAL))
+            adapter = bookAdapter
         }
-        query = et_query.text.toString()
-        start = 1
-        hideKeyboard()
-        searchBook()
-    }
 
-    private fun searchBook() {
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(SearchViewModel::class.java)
+
+        lifecycle.addObserver(disposable)
         disposable.add(
-            api.searchBookRx(query, RESULT_DISPLAY_SIZE, start)
-                .subscribeOn(Schedulers.io())
+            viewModel.searchResult
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ response ->
-                    total = response.total
-                    bookAdapter.addItem(response.items)
-                    setSearchOutputField(query, total)
-                    Log.i("호출성공", "$response")
-                }, {
-                    Log.e("호출실패", "$it")
-                })
+                .doAfterNext { setSearchOutputField(viewModel.query, viewModel.total) }
+                .subscribe { items ->
+                    try {
+                        bookAdapter.setItems(items.value)
+                    } catch (e: IllegalStateException) {
+                        bookAdapter.setItems(emptyList())
+                    }
+                }
         )
     }
 
-    private fun clearSearchField() {
-        Toast.makeText(activity, getString(R.string.search_info), Toast.LENGTH_SHORT).show()
-        setSearchOutputField("", 0)
-    }
+    private fun clickSearch() {
+        with(viewModel) {
+            clearSearchRequestData(et_search.text.toString(), 1)
+            if (et_search.text.toString().isBlank()) {
+                clearSearchResult()
+                showToastMsg(getString(R.string.search_info_msg))
+            } else {
+                searchBook()
+            }
+        }
+        hideKeyboard()    }
 
     private fun setSearchOutputField(query: String, total: Int) {
         tv_total.text = getString(R.string.search_total, query, total)
     }
 
-    private fun initScrollListener() {
-        rv_book_list.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-
-                val layoutManager = recyclerView.layoutManager
-
-                if (start <= MAX_START_PAGE) {
-                    val lastVisibleItem =
-                        (layoutManager as LinearLayoutManager).findLastCompletelyVisibleItemPosition()
-                    if (lastVisibleItem != -1 && lastVisibleItem >= layoutManager.itemCount - 1) {
-                        start += RESULT_DISPLAY_SIZE
-                        searchBook()
-                    }
-                }
-            }
-        })
+    private fun showToastMsg(msg: String) {
+        Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show()
     }
 
     private fun initSearchClickListener() {
@@ -124,7 +101,7 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
     }
 
     private fun initEnterListener() {
-        et_query.setOnEditorActionListener { _, actionId, _ ->
+        et_search.setOnEditorActionListener { _, actionId, _ ->
             when (actionId) {
                 EditorInfo.IME_ACTION_SEARCH -> {
                     clickSearch()
@@ -135,6 +112,25 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         }
     }
 
+    private fun initScrollListener() {
+        rv_book_list.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                val layoutManager = recyclerView.layoutManager
+
+                if (viewModel.start <= MAX_START_PAGE) {
+                    val lastVisibleItem =
+                        (layoutManager as LinearLayoutManager).findLastCompletelyVisibleItemPosition()
+                    if (lastVisibleItem != -1 && lastVisibleItem >= layoutManager.itemCount - 1) {
+                        viewModel.addNextPage()
+                        viewModel.searchBook()
+                    }
+                }
+            }
+        })
+    }
+
     private fun initFabListener() {
         fab_up.setOnClickListener {
             rv_book_list.smoothScrollToPosition(0)
@@ -143,11 +139,6 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
 
     private fun hideKeyboard() {
         val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(et_query.windowToken, 0)
-    }
-
-    companion object {
-        private const val RESULT_DISPLAY_SIZE = 10
-        private const val MAX_START_PAGE = 1000
+        imm.hideSoftInputFromWindow(et_search.windowToken, 0)
     }
 }
