@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MY BOOK SEARCH - TEST</string>
+    <string name="app_name">MABOOK</string>
     <string name="search_info_msg">검색어를 입력하세요</string>
     <string name="search">검색</string>
     <string name="book_image">도서 이미지</string>
@@ -16,4 +16,5 @@
     <string name="finish_info">뒤로 버튼을 한 번 더 누르면 종료됩니다.</string>
     <string name="not_found_description">등록된 책 소개가 없습니다.</string>
     <string name="link">보러가기&#160;&#160;〉</string>
+    <string name="splash">스플래시</string>
 </resources>
