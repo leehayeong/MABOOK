@@ -1,9 +1,11 @@
-package com.example.mybook
+package com.example.mybook.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import com.example.mybook.R
 import com.example.mybook.extensions.replaceFragment
+import com.example.mybook.ui.search.SearchFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -12,7 +14,9 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        supportFragmentManager.replaceFragment(R.id.fl_fragment_view, SearchFragment(), false)
+        supportFragmentManager.replaceFragment(
+            R.id.fl_fragment_view,
+            SearchFragment(), false)
     }
 
     override fun onBackPressed() {

@@ -1,4 +1,4 @@
-package com.example.mybook
+package com.example.mybook.ui.booklink
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -7,13 +7,10 @@ import android.view.MotionEvent
 import android.view.View
 import android.webkit.WebViewClient
 import androidx.fragment.app.Fragment
+import com.example.mybook.R
 import kotlinx.android.synthetic.main.fragment_book_link.*
 
 class BookLinkFragment : Fragment(R.layout.fragment_book_link) {
-
-    companion object {
-        const val LINK_KEY = "link"
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -42,5 +39,9 @@ class BookLinkFragment : Fragment(R.layout.fragment_book_link) {
                 true
             }
         }
+    }
+
+    companion object {
+        const val LINK_KEY = "link"
     }
 }

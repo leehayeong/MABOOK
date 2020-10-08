@@ -1,4 +1,4 @@
-package com.example.mybook
+package com.example.mybook.ui.search
 
 import android.content.Context
 import android.os.Bundle
@@ -12,9 +12,11 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.VERTICAL
+import com.example.mybook.R
 import com.example.mybook.adapter.BookAdapter
 import com.example.mybook.extensions.replaceFragment
 import com.example.mybook.retrofit.NaverApi
+import com.example.mybook.ui.bookdetail.BookDetailFragment
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.addTo
@@ -40,16 +42,14 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         }
     }
 
-    companion object {
-        private const val RESULT_DISPLAY_SIZE = 10
-        private const val MAX_START_PAGE = 1000
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        rv_book_list.adapter = bookAdapter
-        rv_book_list.addItemDecoration(DividerItemDecoration(activity, VERTICAL))
+        with(rv_book_list){
+            adapter = bookAdapter
+            addItemDecoration(DividerItemDecoration(activity, VERTICAL))
+        }
+
         setSearchOutputField(query, total)
 
         initScrollListener()
@@ -71,7 +71,8 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
     }
 
     private fun searchBook() {
-        val resultSearchBook = api.searchBookRx(query, RESULT_DISPLAY_SIZE, start)
+        val resultSearchBook = api.searchBookRx(query,
+            RESULT_DISPLAY_SIZE, start)
         resultSearchBook
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -145,5 +146,10 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
     override fun onDestroy() {
         compositeDisposable.dispose()
         super.onDestroy()
+    }
+
+    companion object {
+        private const val RESULT_DISPLAY_SIZE = 10
+        private const val MAX_START_PAGE = 1000
     }
 }

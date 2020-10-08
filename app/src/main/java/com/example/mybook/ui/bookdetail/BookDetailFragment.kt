@@ -1,4 +1,4 @@
-package com.example.mybook
+package com.example.mybook.ui.bookdetail
 
 import android.graphics.Paint
 import android.os.Bundle
@@ -7,6 +7,8 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
+import com.example.mybook.ui.booklink.BookLinkFragment
+import com.example.mybook.R
 import com.example.mybook.extensions.htmlToSpanned
 import com.example.mybook.extensions.replaceFragment
 import com.example.mybook.model.Item
@@ -14,10 +16,6 @@ import kotlinx.android.synthetic.main.fragment_book_detail.*
 import java.text.DecimalFormat
 
 class BookDetailFragment : Fragment(R.layout.fragment_book_detail) {
-
-    companion object {
-        const val ITEM_KEY = "item"
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -99,5 +97,9 @@ class BookDetailFragment : Fragment(R.layout.fragment_book_detail) {
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    companion object {
+        const val ITEM_KEY = "item"
     }
 }
