@@ -42,4 +42,5 @@ ext {
     junitVersion = '4.12'
     testJunitVersion = '1.1.2'
     espressoVersion = '3.3.0'
+    fragmentKtxVersion = '1.2.5'
 }

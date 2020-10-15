@@ -7,7 +7,7 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -30,7 +30,7 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         SearchViewModelFactory(NaverApi.createRetrofit())
     }
 
-    private lateinit var viewModel: SearchViewModel
+    private val viewModel by viewModels<SearchViewModel>({ this }, { viewModelFactory })
 
     private val bookAdapter: BookAdapter by lazy {
         BookAdapter(mutableListOf()).apply {
@@ -39,7 +39,7 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
                 val bundle = Bundle()
                 bundle.putParcelable(BookDetailFragment.ITEM_KEY, bookAdapter.getItem(position))
                 nextFragment.arguments = bundle
-                fragmentManager?.replaceFragment(R.id.fl_fragment_view, nextFragment, true)
+                activity?.supportFragmentManager?.replaceFragment(R.id.fl_fragment_view, nextFragment, true)
             }
         }
     }
@@ -56,8 +56,6 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
             addItemDecoration(DividerItemDecoration(activity, VERTICAL))
             adapter = bookAdapter
         }
-
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(SearchViewModel::class.java)
 
         lifecycle.addObserver(disposable)
         disposable.add(

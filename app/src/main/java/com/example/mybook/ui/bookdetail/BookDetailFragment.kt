@@ -85,7 +85,7 @@ class BookDetailFragment : Fragment(R.layout.fragment_book_detail) {
             val bundle = Bundle()
             bundle.putString(BookLinkFragment.LINK_KEY, link)
             nextFragment.arguments = bundle
-            fragmentManager?.replaceFragment(R.id.fl_fragment_view, nextFragment, true)
+            activity?.supportFragmentManager?.replaceFragment(R.id.fl_fragment_view, nextFragment, true)
         }
     }
 
