@@ -3,12 +3,13 @@ package com.example.mybook.rx
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.disposables.Disposable
 
 class AutoClearedDisposable(
-    private val lifecycleOwner: Fragment,
+    private val lifecycleOwner: LifecycleOwner,
     private val alwaysClearOnStop: Boolean = true,
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
 ) : LifecycleObserver {
